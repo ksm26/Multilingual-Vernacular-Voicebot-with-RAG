@@ -227,8 +227,8 @@ if __name__ == "__main__":
     # define candidate models (update ids as per availability)
     CANDIDATES = {
         "hi": "ai4bharat/indicwav2vec-hindi",
-        "pa": "ai4bharat/indicwav2vec-punjabi",
-        "multi": "openai/whisper-small"  # optional multilingual fallback
+        "pa": "manandey/wav2vec2-large-xlsr-punjabi",
+        "en": "openai/whisper-small"  # optional multilingual fallback
     }
 
     router = ASRRouter(CANDIDATES)
