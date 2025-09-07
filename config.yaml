@@ -1,0 +1,11 @@
+# config.yaml
+embedding_model: "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
+vectorstore: "faiss"   # options: faiss | chroma | weaviate
+persist_dir: "./vectorstore"
+chunk_size: 800
+chunk_overlap: 128
+batch_size: 64
+languages:
+  - {col: "english", code: "en"}
+  - {col: "hindi", code: "hi"}
+  - {col: "punjabi", code: "pun"}   # name of regional column in CSV/JSON
