@@ -131,7 +131,7 @@ The system supports:
 **9. Conversational Memory & Follow-ups**
 - `langchain_rag.py` → Maintains short-term session memory (last N turns), rewrites follow-up queries, and ensures contextual continuity.
 
-## ⚙️ Detailed description of the scripts
+## 🔍 In-Depth Script Descriptions
 
 ## Script 1: realtime_stt.py
 
@@ -140,6 +140,9 @@ It records audio from the microphone, runs speech-to-text, detects language, ret
 
 ### Features
 - Live audio capture (mic → numpy array).
+- **Configurable ASR modes:**
+- - `--mode single` → Uses a single ASR model specified by `--asr_model`.
+- - `--mode router` → Uses multiple ASR candidates (`--router_candidates`) and automatically picks the best one based on confidence.
 - STT with Whisper / AI4Bharat IndicWav2Vec models.
 - Supports single ASR model or ASR router mode.
 - Language detection (via langdetect or Unicode heuristics).
@@ -147,12 +150,20 @@ It records audio from the microphone, runs speech-to-text, detects language, ret
 - Plays back responses via Indic TTS.
 
 ### Usage
+**Single ASR model (Whisper):**
+```bash
+python realtime_stt.py \
+    --csv data/schemes_multilingual.csv \
+    --config config.yaml \
+    --mode single \
+    --asr_model openai/whisper-small 
+```
+**Router mode (multiple ASR models for Hindi, Punjabi, English):**
 ```bash
 python realtime_stt.py \
     --csv data/schemes_multilingual.csv \
     --config config.yaml \
     --mode router \
-    --asr_model openai/whisper-small \
     --router_candidates '{"hi":"ai4bharat/indicwav2vec-hindi","pa":"manandey/wav2vec2-large-xlsr-punjabi","en":"openai/whisper-small"}'
 ```
 
