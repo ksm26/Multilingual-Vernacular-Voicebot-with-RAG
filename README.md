@@ -107,11 +107,24 @@ The system supports:
 
 **3. Language Detection**
 - `realtime_stt.py` → Uses langdetect (if available) or Unicode heuristics to identify query language.
+- **Conversation in English**
+<p align="center">
+<img src="images/eng.png" width="1000" height="1000"> 
+</p>
 
 **4. Translation (Vernacular → English, if needed)**
 
 - `langchain_rag.py (inside IndicTranslator class) → Uses `ai4bharat/indictrans2-indic-en` → Indic → English and 
 `ai4bharat/indictrans2-en-indic` → English → Indic.
+- **Conversation in Hindi**
+<p align="center">
+<img src="images/hindi.png" width="1000" height="1000"> 
+</p>
+
+- **Conversation in Punjabi**
+<p align="center">
+<img src="images/pun.png" width="1000" height="1000"> 
+</p>
 
 **5. Retrieval (Semantic Search)**
 - `retrieval_with_indiclid.py` → Embeds corpus with **IndicLID** from AI4Bharat)  and retrieves relevant passages.
