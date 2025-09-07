@@ -109,7 +109,7 @@ The system supports:
 - `realtime_stt.py` → Uses langdetect (if available) or Unicode heuristics to identify query language.
 - **Conversation in English**
 <p align="center">
-<img src="images/eng.png" width="1000" height="1000"> 
+<img src="images/eng.png" width="1300" height="1300"> 
 </p>
 
 **4. Translation (Vernacular → English, if needed)**
@@ -118,12 +118,12 @@ The system supports:
 `ai4bharat/indictrans2-en-indic` → English → Indic.
 - **Conversation in Hindi**
 <p align="center">
-<img src="images/hindi.png" width="1000" height="1000"> 
+<img src="images/hindi.png" width="1300" height="1300"> 
 </p>
 
 - **Conversation in Punjabi**
 <p align="center">
-<img src="images/pun.png" width="1000" height="1000"> 
+<img src="images/pun.png" width="1300" height="1300"> 
 </p>
 
 **5. Retrieval (Semantic Search)**
