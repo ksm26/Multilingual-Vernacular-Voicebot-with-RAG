@@ -1,0 +1,58 @@
+{
+  "encoding_detected": "utf-8",
+  "encoding_confidence": 0.99,
+  "n_rows": 50,
+  "columns": [
+    "id",
+    "scheme_name",
+    "category",
+    "english",
+    "hindi",
+    "punjabi",
+    "source_url"
+  ],
+  "id_field_used": "id",
+  "language_checks": {
+    "english": {
+      "present": true,
+      "n_non_empty": 50,
+      "pct_non_empty": 100.0,
+      "n_script_ok": 50,
+      "pct_script_ok": 100.0,
+      "lengths": {
+        "min": 65,
+        "median": 90,
+        "max": 111,
+        "mean": 88.64
+      }
+    },
+    "hindi": {
+      "present": true,
+      "n_non_empty": 50,
+      "pct_non_empty": 100.0,
+      "n_script_ok": 50,
+      "pct_script_ok": 100.0,
+      "lengths": {
+        "min": 46,
+        "median": 74,
+        "max": 91,
+        "mean": 73.56
+      }
+    },
+    "punjabi": {
+      "present": true,
+      "n_non_empty": 50,
+      "pct_non_empty": 100.0,
+      "n_script_ok": 50,
+      "pct_script_ok": 100.0,
+      "lengths": {
+        "min": 53,
+        "median": 71,
+        "max": 88,
+        "mean": 71.34
+      }
+    }
+  },
+  "n_url_ok": 50,
+  "n_problem_rows": 0
+}
