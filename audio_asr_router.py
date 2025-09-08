@@ -233,7 +233,7 @@ if __name__ == "__main__":
 
     router = ASRRouter(CANDIDATES)
     # load a test audio file (mono)
-    audio_path = "samples/test_punjabi.wav"  # replace with your file
+    audio_path = "tts_outputs/hi/tts_18b398d7c199455ebf2a6beddb704d75.wav"  # replace with your file
     audio_np, sr = sf.read(audio_path)
     if audio_np.ndim > 1:
         audio_np = np.mean(audio_np, axis=1)
