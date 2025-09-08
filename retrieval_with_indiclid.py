@@ -32,8 +32,6 @@ import yaml
 import torch
 from transformers import AutoTokenizer, AutoModel
 from urllib.parse import urlparse
-# Cache for a loaded fasttext IndicLID model (if available)
-_FASTTEXT_LID = None
 
 # ---------- Embedding model (simple IndicBERT pooled) ----------
 class IndicEmbeddingModel:
@@ -61,9 +59,15 @@ class IndicEmbeddingModel:
 
 # ---------- FAISS wrapper ----------
 class VectorStoreFAISS:
-    def __init__(self, dim: int = None):
+    def __init__(self, dim: int = None, metric= "cosine"):
+        self.metric = metric
         if dim is not None:
-            self.index = faiss.IndexFlatIP(dim)
+            if metric == "cosine":
+                self.index = faiss.IndexFlatIP(dim) # inner product  -> cosine-similarity
+            elif metric == "l2":
+                self.index = faiss.IndexFlatL2(dim) # euclidean distance 
+            else:
+                raise ValueError("Unsupported metric: choose 'cosine' or 'l2'")
         else:
             self.index = None
         self.docs = []
@@ -78,16 +82,6 @@ class VectorStoreFAISS:
     def search_raw(self, query_vec: np.ndarray, topk=3):
         D, I = self.index.search(query_vec.reshape(1, -1), k=topk)
         return D, I
-
-    def search(self, query_vec: np.ndarray, topk=3):
-        D, I = self.search_raw(query_vec, topk)
-        results = []
-        for score, idx in zip(D[0], I[0]):
-            if idx == -1:
-                continue
-            md = self.docs[idx]
-            results.append({"score": float(score), **md})
-        return results
 
 # ---------- IndicLID wrapper (fasttext) ----------
 class IndicLID:
@@ -208,76 +202,6 @@ def simple_script_detect(text: str):
             return "Guru"
     return "Latn"
 
-def _load_fasttext_model_once():
-    """Try to load a fasttext-based IndicLID model once. Path taken from env var or default location."""
-    global _FASTTEXT_LID
-    if _FASTTEXT_LID is not None:
-        return _FASTTEXT_LID
-    try:
-        model_path = os.environ.get("INDICLID_MODEL_PATH", "./models/IndicLID-FTR-v1.bin")
-        if os.path.exists(model_path):
-            import fasttext
-            _FASTTEXT_LID = fasttext.load_model(model_path)
-        else:
-            _FASTTEXT_LID = None
-    except Exception:
-        _FASTTEXT_LID = None
-    return _FASTTEXT_LID
-
-def detect_lang_from_text(text: str) -> str:
-    """
-    Return a short language code for `text` (e.g. 'hi', 'pa', 'en', 'bn', 'ta', ...).
-
-    Order of attempts:
-      1) If an IndicLID fasttext model is present (path from INDICLID_MODEL_PATH or default),
-         use it (cached).
-      2) Use Unicode script heuristic (Devanagari -> hi, Gurmukhi -> pa).
-      3) Try `langdetect` library if installed (best-effort).
-      4) Fallback to 'en'.
-
-    This helper is deliberately conservative and fast.
-    """
-    txt = (text or "").strip()
-    if not txt:
-        return "en"
-
-    # 1) fasttext IndicLID if available
-    ft = _load_fasttext_model_once()
-    if ft is not None:
-        try:
-            labels, probs = ft.predict(txt, k=1)
-            if labels:
-                lab = labels[0].replace("__label__", "")
-                base = lab.split("_")[0]
-                mapping = {
-                    "hin": "hi", "pan": "pa", "pun": "pa", "eng": "en",
-                    "ben": "bn", "tam": "ta", "tel": "te", "guj": "gu",
-                    "mal": "ml", "kan": "kn", "ori": "or", "mar": "mr"
-                }
-                return mapping.get(base, base)
-        except Exception:
-            pass
-
-    # 2) Unicode script heuristic
-    s = simple_script_detect(txt)
-    if s == "Deva":
-        return "hi"
-    if s == "Guru":
-        return "pa"
-
-    # 3) langdetect fallback (if installed)
-    try:
-        from langdetect import detect as _ldetect
-        try:
-            det = _ldetect(txt)
-            return det
-        except Exception:
-            pass
-    except Exception:
-        pass
-
-    # 4) final fallback
-    return "en"
 
 # ---------- OOD keyword detector (same as before) ----------
 class OutOfDomainDetector:
@@ -364,7 +288,7 @@ class RetrieverWithIndicLID:
             embs.append(v)
         embs = np.vstack(embs).astype("float32")
         dim = embs.shape[1]
-        self.vs = VectorStoreFAISS(dim)
+        self.vs = VectorStoreFAISS(dim, metric="cosine")
         self.vs.build(embs, self.corpus)
         print(f"[i] Built FAISS with {len(self.corpus)} vectors (dim={dim})")
 
